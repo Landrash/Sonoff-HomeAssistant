@@ -2,7 +2,7 @@
 
 ![](images/sonoff.png "Sonoff Range")
 
-Sonoff-HomeAssistant is alternative firmware for the brilliant & cheap ($ not quality) range of Sonoff range of ESP-8266 based WiFi controlled switches that allow you to use your own mqtt broker rather than the 'ITEAD CLOUD' service that's shipped with the pre-installed firmware. They would have to be some of the cheapest IoT switches available today. In fact, even if you knew how to build one from scratch, the components alone would cost more so why bother.
+Sonoff-HomeAssistant is alternative firmware for the brilliant & cheap ($ not quality) range of Sonoff range of ESP-8266 based WiFi controlled switches that allow you to use your own MQTT broker rather than the 'ITEAD CLOUD' service that's shipped with the pre-installed firmware. They would have to be some of the cheapest IoT switches available today. In fact, even if you knew how to build one from scratch, the components alone would cost more so why bother.
 
 #### Currently Supported Devices
 
@@ -19,11 +19,11 @@ Sonoff-HomeAssistant is alternative firmware for the brilliant & cheap ($ not qu
 - Sonoff DUAL [Link](https://www.itead.cc/smart-home/sonoff-dual.html?acc=70efdf2ec9b086079795c442636b55fb)
 - Sonoff SC [Link](https://www.itead.cc/smart-home/sonoff-sc.html?acc=70efdf2ec9b086079795c442636b55fb)
 
-It's designed to be installed with the Arduino IDE and has been tested on Arduino 1.6.13 but should be backwards & forwards compatible with other versions. I realize there are many other mqtt based firmware(s) that have been written for the Sonoff switches, but I found most of them overly complex for my liking. This firmware is basic but ***extremely stable*** and just gets the job done. There are no frills what so ever, just the core functionality the switch requires to turn the relay on and off (and report temperature if using that version or power consumption if using the POW). The OTA versions of the firmware allow OTA upgrade using the Arduino IDE (correct environment for OTA needs to be setup). All Home Automation 'logic' is done in HomeAssistant. That is why you installed HomeAssistant in the first place right!
+It's designed to be installed with the Arduino IDE and has been tested on Arduino 1.6.13 but should be backwards & forwards compatible with other versions. I realize there are many other MQTT based firmware(s) that have been written for the Sonoff switches, but I found most of them overly complex for my liking. This firmware is basic but ***extremely stable*** and just gets the job done. There are no frills what so ever, just the core functionality the switch requires to turn the relay on and off (and report temperature if using that version or power consumption if using the POW). The OTA versions of the firmware allow OTA upgrade using the Arduino IDE (correct environment for OTA needs to be setup). All Home Automation 'logic' is done in HomeAssistant. That is why you installed HomeAssistant in the first place right!
 
-The Sonoff switches do what they were designed to do, turn a load ON or OFF. I've found that once the mqtt topic is set and the switch has connected to your mqtt broker, you don't need to make any modifications to it ever again unless you make major infrastructure changes (i.e walls in home have moved, light becomes a fan, additional switches added in room etc). Even if you add additional switches, if your naming convention is right, the switch will not need to be touched again.
+The Sonoff switches do what they were designed to do, turn a load ON or OFF. I've found that once the MQTT topic is set and the switch has connected to your MQTT broker, you don't need to make any modifications to it ever again unless you make major infrastructure changes (i.e walls in home have moved, light becomes a fan, additional switches added in room etc). Even if you add additional switches, if your naming convention is right, the switch will not need to be touched again.
 
-I've called the project Sonoff-HomeAssistant but the switch could be used for many of the other home automation systems that use a mqtt broker. I'm not sure why you'd want to use anything other than [Home Assistant](https://home-assistant.io/) though.
+I've called the project Sonoff-HomeAssistant but the switch could be used for many of the other home automation systems that use a MQTT broker. I'm not sure why you'd want to use anything other than [Home Assistant](https://home-assistant.io/) though.
 
 Speaking of Home Assistant, I have included a snippet of how to setup the [switch](https://home-assistant.io/components/switch.mqtt/) component in configuration.yaml and if you've installed the version that reports temperature or power the [sensor](https://home-assistant.io/components/sensor.mqtt/) component as well.
 
@@ -39,11 +39,11 @@ Clone the **Sonoff-HomeAssistant** repository to your local machine. Copy the re
 $ git clone https://github.com/KmanOz/Sonoff-HomeAssistant
 ```
 
-## 2. Clone the lmroy/pubsubclient mqtt library to your local machine.
+## 2. Clone the lmroy/pubsubclient MQTT library to your local machine.
 
-I use the [lmroy](https://github.com/Imroy/pubsubclient) version of this excellent mqtt library, mainly because it supports QOS1 and keepalive settings right from within the sketch. No other modifications to library files are necessary to achieve a rock solid connection to your mqtt broker.
+I use the [lmroy](https://github.com/Imroy/pubsubclient) version of this excellent MQTT library, mainly because it supports QOS1 and keepalive settings right from within the sketch. No other modifications to library files are necessary to achieve a rock solid connection to your MQTT broker.
 
-It's currently setup to use only v3.1.1 of the mqtt standard and will only work on that version broker unless you modify the code so make sure your broker is setup to use v3.1.1 of the mqtt standard and not v3.1.
+It's currently setup to use only v3.1.1 of the MQTT standard and will only work on that version broker unless you modify the code so make sure your broker is setup to use v3.1.1 of the MQTT standard and not v3.1.
 
 ``` bash
 $ git clone https://github.com/Imroy/pubsubclient
@@ -81,7 +81,7 @@ switch:
 ```
 Assuming you make no changes to the topic in the code provided, you should be able to test the switch and be happy that you now have control using Home Assistant.
 
-If you've installed the version that reports temperature, you can also setup sensors in HomeAssistant to display both Temperature & Humidity. Modify your configuration.yaml and add the following.
+If you've installed the version that reports temperature, you can also setup sensors in Home Assistant to display both Temperature & Humidity. Modify your configuration.yaml and add the following.
 
 ```bash
 sensor:
@@ -130,18 +130,18 @@ If that didn't make any sense at all, I suggest you do some reading on how to in
 
 ## 6. Commands and Operation
 
-As mentioned earlier, the commands are very basic. In fact the switch will respond to 4 basic mqtt commands and they are :-
+As mentioned earlier, the commands are very basic. In fact the switch will respond to 4 basic MQTT commands and they are :-
 
 - on (Turns the relay and LED on)(For 4CH precede the *on* command by the number of the relay. e.g 1on, 3on etc)
 - off (Turns the relay and LED off)(For 4CH precede the *off* command by the number of the relay. e.g 2off, 3off etc)
-- stat (Returns the status of the switch via mqtt message)(For 4CH the number of the relay will precede the status. e.g. 1on, 4off)
+- stat (Returns the status of the switch via MQTT message)(For 4CH the number of the relay will precede the status. e.g. 1on, 4off)
 - reset (Forces a restart of the switch) (4 long flashes of the status LED)
 
 If you've installed the version that reports temperature you have an additional option.
 
 - temp (Forces a temperature & humidity check otherwise it's reported every 1 minute) (1 short flash of the status LED)
 
-When power is first applied the unit will immediately connect to your WiFi access point / router and your mqtt broker. When it connects the status LED will flash fast 4 times. That's it, your connected.
+When power is first applied the unit will immediately connect to your WiFi access point / router and your MQTT broker. When it connects the status LED will flash fast 4 times. That's it, your connected.
 
 If you've installed the version that reports temperature you will see a short single flash to indicate that the temperature & humidity has been published as well.
 
@@ -161,31 +161,31 @@ If unsuccessful after it enters OTA upgrade mode, it will exit with 2 fast flash
 
 ***ESPsonoff-v1.01p - Original iTead Sonoff Switch, Sonoff Touch, Sonof S20 Smart Socket, Sonoff SV***
 
-Firmware to control relay only with ON/OFF functionality and publish via mqtt. EEPROM storage of Relay State.
+Firmware to control relay only with ON/OFF functionality and publish via MQTT. EEPROM storage of Relay State.
 
 ***ESPsonoff-v1.01t - Original iTead Sonoff Switch***
 
-Firmware to control relay with ON/OFF functionality and temperature reporting via DHT11/22 and publish via mqtt. EEPROM storage of Relay State.
+Firmware to control relay with ON/OFF functionality and temperature reporting via DHT11/22 and publish via MQTT. EEPROM storage of Relay State.
 
 ***ESPsonoff_TH-v1.01p - TH10/16 iTead Sonoff Switch***
 
-Firmware to control relay only with ON/OFF functionality and publish its status via mqtt. EEPROM storage of Relay State. Remote Wallswitch Support.
+Firmware to control relay only with ON/OFF functionality and publish its status via MQTT. EEPROM storage of Relay State. Remote Wallswitch Support.
 
 ***ESPsonoff_TH-v1.01t - TH10/16 iTead Sonoff Switch***
 
-Firmware to control relay with ON/OFF functionality and temperature reporting using the Sonoff Sensor-AM2301 (available from iTead) and publish via mqtt. EEPROM storage of Relay State.
+Firmware to control relay with ON/OFF functionality and temperature reporting using the Sonoff Sensor-AM2301 (available from iTead) and publish via MQTT. EEPROM storage of Relay State.
 
 ***ESPsonoff_TH-v1.01pt - TH10/16 iTead Sonoff Switch***
 
-Firmware to control relay with ON/OFF functionality and temperature reporting using the Sonoff Sensor-AM2301 (available from iTead) and publish via mqtt. EEPROM storage of Relay State. Remote Wallswitch Support.
+Firmware to control relay with ON/OFF functionality and temperature reporting using the Sonoff Sensor-AM2301 (available from iTead) and publish via MQTT. EEPROM storage of Relay State. Remote Wallswitch Support.
 
 ***ESPsonoff_POW-v1.01 - iTead Sonoff Pow Switch***
 
-Firmware to control relay with ON/OFF functionality and report power usage (Wattage) and Voltage via mqtt. EEPROM storage of Relay State
+Firmware to control relay with ON/OFF functionality and report power usage (Wattage) and Voltage via MQTT. EEPROM storage of Relay State
 
 ***ESPsonoff_4CH-v1.01 - iTead Sonoff 4CH Switch***
 
-Firmware to control 4 X relays with ON/OFF functionality and publish via mqtt. EEPROM storage of Relay State.
+Firmware to control 4 X relays with ON/OFF functionality and publish via MQTT. EEPROM storage of Relay State.
 
 ## 8. DHT22 Sensor Installation (For Original Sonoff Switch)
 
@@ -193,7 +193,7 @@ Installing the DHT11 or 22 sensor is relatively straight forward. DHT-11 reports
 
 ![alt Sonoff Sensor Install](images/sonoff_temp.JPG "Sonoff Sensor Install")
 
-You will need a 10K resistor between +V and SIGNAL. In the image above, I've the soldered the 10K resistor under the heatshrink tubing so it isn't visible.
+You will need a 10K resistor between +V and SIGNAL. In the image above, I've the soldered the 10K resistor under the heat shrink tubing so it isn't visible.
 
 ![alt Sensor Wiring](images/sensor_wiring.jpg "Sensor Wiring")
 
